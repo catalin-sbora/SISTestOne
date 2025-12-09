@@ -30,11 +30,15 @@ namespace TestOneWebApp.Controllers
             string arguments;
 
 #if WINDOWS
-            arguments = "-n 4 " + ip; // Windows uses -n for count
-            var processStartInfo = new ProcessStartInfo("ping.exe", arguments);
+            var processStartInfo = new ProcessStartInfo("ping.exe");
+            processStartInfo.ArgumentList.Add("-n");
+            processStartInfo.ArgumentList.Add("4");
+            processStartInfo.ArgumentList.Add(ip); // Safe: each arg is separately added
 #else
-            arguments = "-c 4 " + ip; // Linux/macOS uses -c for count
-            var processStartInfo = new ProcessStartInfo("ping", arguments);
+            var processStartInfo = new ProcessStartInfo("ping");
+            processStartInfo.ArgumentList.Add("-c");
+            processStartInfo.ArgumentList.Add("4");
+            processStartInfo.ArgumentList.Add(ip); // Safe: each arg is separately added
 #endif
 
             Process? process = Process.Start(processStartInfo);
@@ -42,7 +46,7 @@ namespace TestOneWebApp.Controllers
             {
                 process.WaitForExit();
             }
-            return "ping " + arguments;
+            return "pinging " + ip;
         }
 
         // POST api/<SecurityTest>
