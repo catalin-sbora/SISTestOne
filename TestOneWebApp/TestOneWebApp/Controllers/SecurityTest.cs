@@ -7,7 +7,7 @@ namespace TestOneWebApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SecurityTest : ControllerBase
+    public class SecurityTestController : ControllerBase
     {
         // GET: api/<SecurityTest>
         [HttpGet]
