@@ -10,9 +10,11 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build:    
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./SISTestOne
 
     steps:
     - uses: actions/checkout@v4
