@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-
+using System.Net;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TestOneWebApp.Controllers
@@ -20,14 +20,29 @@ namespace TestOneWebApp.Controllers
         [HttpGet("{ip}")]
         public string Get(string ip)
         {
-            var commandToExecute = "ping -c " + ip;
-            ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe", "-c \"" + commandToExecute + "\"");
+            // Validate that 'ip' is a valid IPv4 or IPv6 address
+            if (!System.Net.IPAddress.TryParse(ip, out var address))
+            {
+                return "Invalid IP address";
+            }
+
+            // Prepare arguments for 'ping'
+            string arguments;
+
+#if WINDOWS
+            arguments = "-n 4 " + ip; // Windows uses -n for count
+            var processStartInfo = new ProcessStartInfo("ping.exe", arguments);
+#else
+            arguments = "-c 4 " + ip; // Linux/macOS uses -c for count
+            var processStartInfo = new ProcessStartInfo("ping", arguments);
+#endif
+
             Process? process = Process.Start(processStartInfo);
             if (process != null)
             {
                 process.WaitForExit();
             }
-            return commandToExecute;
+            return "ping " + arguments;
         }
 
         // POST api/<SecurityTest>
